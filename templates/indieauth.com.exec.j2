@@ -1,0 +1,5 @@
+#!/bin/sh
+DIR=/home/indieauth/indieauth.com
+cd $DIR
+
+chpst -u indieauth:indieauth /home/indieauth/.gem/ruby/2.2.0/bin/bundle exec thin -p 9007 --threaded start

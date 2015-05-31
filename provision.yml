@@ -6,15 +6,78 @@
 
   roles:
     - { role: user, users: ops_user }
+    - { role: user, users: indieauth_user }
     - { role: user_keys, users: ops_user }
     - { role: sudoers, users: ops_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: ALL" }
     - baseline
     - iptables
+    - ruby
 
   tasks:
     - name: add indieauth keys
       authorized_key: 
-        user: "{{ item.name }}"
+        user: "indieauth"
         manage_dir: yes
         key: "{{ item.pubkey }}"
       with_flattened: indieauth_team
+
+    - name: add bin to path
+      lineinfile:
+        dest: /home/indieauth/.profile
+        insertafter: EOF
+        state: present
+        line: 'export PATH=$PATH:/home/indieauth/bin'
+
+    - name: add gems to path
+      lineinfile:
+        dest: /home/indieauth/.profile
+        insertafter: EOF
+        state: present
+        line: 'export PATH=$PATH:/home/indieauth/.gem/ruby/2.2.0/bin'
+
+    - name: write nginx.conf
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+
+    - name: create log directory
+      file:
+        state: directory
+        path: "/var/log/indieauth"
+        owner: "indieauth"
+        group: "indieauth"
+
+    - name: create runit directories
+      file:
+        state: directory
+        path: "/etc/sv/indieauth/log"
+        owner: root
+        group: root
+
+    - name: populate runit log entry
+      template:
+        src: templates/indieauth.com.log.j2
+        dest: "/etc/sv/indieauth/log/run"
+        mode: "0755"
+
+    - name: populate runit entry
+      template:
+        src: templates/indieauth.com.exec.j2
+        dest: "/etc/sv/indieauth/run"
+        mode: "0755"
+
+    - name: write indieauth.com vhost
+      template:
+        src: templates/indieauth.com.conf.j2
+        dest: /etc/nginx/conf.d/indieauth.com.conf
+
+    - name: restart nginx
+      service:
+        state: restarted
+        name: nginx
+
+    - name: start process
+      file:
+        src: "/etc/sv/indieauth"
+        dest: "/etc/service/indieauth"
+        state: link

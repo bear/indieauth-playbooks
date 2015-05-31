@@ -1,4 +1,0 @@
-ruby_major_version: "2.2"
-ruby_version:       "{{ ruby_major_version }}.2"
-ruby_tarball:       "ruby-{{ ruby_version }}.tar.gz"
-ruby_url:           "http://cache.ruby-lang.org/pub/ruby/{{ ruby_major_version }}/"

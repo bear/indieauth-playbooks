@@ -18,6 +18,15 @@
     mode: "0700"
   with_flattened: users
 
+- name: profile
+  copy:
+    src: profile
+    dest: "/home/{{ item.name }}/.profile"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    force: no
+  with_flattened: users
+
 - name: screenrc for user
   copy:
     src: screenrc

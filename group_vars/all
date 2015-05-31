@@ -2,8 +2,21 @@ secrets: ~/secrets/
 Public_net: "eth0"
 rule_protocol: "tcp"
 
+ruby_version:
+  major: "2.2"
+  full:  "2.2.2"
+
+ruby:
+  version: "{{ ruby_version.full }}"
+  tarball: "ruby-{{ ruby_version.full }}.tar.gz"
+  url:     "http://cache.ruby-lang.org/pub/ruby/{{ ruby_version.major }}/"
+
 ops_user:
   - name: "ops"
+    pubkey: "{{ lookup('file', secrets+'yet-ops.key') }}"
+
+indieauth_user:
+  - name: "indieauth"
     pubkey: "{{ lookup('file', secrets+'yet-ops.key') }}"
 
 indieauth_team:

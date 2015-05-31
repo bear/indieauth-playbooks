@@ -12,4 +12,4 @@
     - libyaml-dev
 
 - name: get ruby source tarball
-  shell: chdir=/tmp/ creates={{ ruby_tarball }} wget {{ ruby_url}}{{ ruby_tarball }}
+  shell: chdir=/tmp/ creates={{ ruby.tarball }} wget {{ ruby.url}}{{ ruby.tarball }}

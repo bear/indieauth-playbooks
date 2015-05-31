@@ -19,6 +19,7 @@
     - build-essential
     - iptables-persistent
     - redis-server
+    - nginx
 
 - name: disable X11
   lineinfile:
