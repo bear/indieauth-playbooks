@@ -1,0 +1,53 @@
+#!/bin/bash
+
+iptables  -F
+
+# Default policy is drop
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+iptables -A INPUT -p tcp -m multiport --dports 22 -j fail2ban-ssh
+iptables -A fail2ban-ssh -j RETURN
+
+# Allow localhost
+iptables -A INPUT  -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# Allow incoming SSH
+iptables -A INPUT  -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow outgoing SSH
+iptables -A OUTPUT -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow incoming HTTP/S
+iptables -A INPUT  -p tcp --dport 80  -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 80  -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+
+# Allow outgoing HTTP(s)
+iptables -A INPUT  -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Allow outbound DHCP
+iptables -A OUTPUT -p udp --dport 67:68 -j ACCEPT
+iptables -A INPUT  -p udp --sport 67:68 -j ACCEPT
+
+# Allow outbound DNS
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+iptables -A INPUT  -p udp --sport 53 -j ACCEPT
+
+# Allow only NTP if it's our request
+iptables -A INPUT -s 0/0 -d 0/0 -p udp --source-port 123:123 -m state --state ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -s 0/0 -d 0/0 -p udp --destination-port 123:123 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+for s in /opt/sbin/iptables_conf.d/iptables_*.sh ; do
+  if [ -e "${s}" ]; then
+    source ${s}
+  fi
+done

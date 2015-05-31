@@ -1,0 +1,12 @@
+---
+- name: enable rule
+  template:
+    src: "{{ rule_type }}.sh.j2"
+    dest: /opt/sbin/iptables_conf.d/iptables_{{ rule_name }}_{{ rule_net }}_{{ rule_type }}.sh
+    mode: "0755"
+
+- name: run iptables
+  shell: /opt/sbin/iptables.sh
+
+- name: save iptables
+  shell: /sbin/iptables-save > /etc/iptables.rules.v4

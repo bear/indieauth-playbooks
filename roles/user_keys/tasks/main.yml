@@ -1,0 +1,16 @@
+---
+- name: create ssh directory
+  file:
+    state: directory
+    path: "/home/{{ item.name }}/.ssh"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: "0700"
+  with_flattened: users
+
+- name: manage authorized keys
+  authorized_key: 
+    user: "{{ item.name }}"
+    manage_dir: yes
+    key: "{{ item.pubkey }}"
+  with_flattened: users

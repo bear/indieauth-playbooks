@@ -1,0 +1,19 @@
+---
+- name: ensure /opt/sbin/iptables_conf.d
+  file:
+    state: directory
+    path: /opt/sbin/iptables_conf.d
+    owner: root
+    group: root
+
+- name: copy iptables script
+  template:
+    src: iptables.sh.j2
+    dest: /opt/sbin/iptables.sh
+    mode: "0755"
+
+- name: copy check iptables script
+  copy:
+    src: checkiptables.sh
+    dest: /opt/sbin
+    mode: "0755"

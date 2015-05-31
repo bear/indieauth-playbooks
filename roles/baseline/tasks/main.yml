@@ -1,0 +1,65 @@
+---
+- name: update apt packages
+  apt:
+    upgrade: full
+    update_cache: yes
+
+- name: baseline packages
+  apt:
+    state: installed
+    pkg: "{{ item }}"
+  with_items:
+    - ntp
+    - fail2ban
+    - screen
+    - git
+    - curl
+    - vim
+    - runit
+    - build-essential
+    - iptables-persistent
+    - redis-server
+
+- name: disable X11
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^X11Forwarding\\syes"
+    line: "X11Forwarding no"
+
+- name: uncomment password auth if required
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication\\syes"
+    line: "PasswordAuthentication no"
+
+- name: disable password auth if required
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication\\syes"
+    line: "PasswordAuthentication no"
+
+- name: ensure /opt/sbin
+  file:
+    state: directory
+    path: /opt/sbin
+    owner: root
+    group: root
+
+- name: set vm.overcommit_memory in /etc/sysctl.conf
+  lineinfile:
+    dest: /etc/sysctl.conf
+    regexp: "^vm.overcommit_memory"
+    line: "vm.overcommit_memory = 1"
+
+- name: set vm.overcommit_memory
+  command: "sysctl vm.overcommit_memory=1"
+
+- name: enable runit to autostart
+  copy:
+    src: runsvcdir_conf
+    dest: /etc/init/runsvdir.conf
+
+- name: start runit if required
+  service:
+    state: started
+    name: runsvdir

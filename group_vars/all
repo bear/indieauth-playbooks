@@ -1,0 +1,13 @@
+secrets: ~/secrets/
+Public_net: "eth0"
+rule_protocol: "tcp"
+
+ops_user:
+  - name: "ops"
+    pubkey: "{{ lookup('file', secrets+'yet-ops.key') }}"
+
+indieauth_team:
+  - name:   "bear"
+    pubkey: "{{ lookup('file', secrets + 'bear.key') }}"
+  - name:   "aaronpk"
+    pubkey: "{{ lookup('file', secrets + 'aaronpk.key') }}"

@@ -1,0 +1,27 @@
+---
+- name: create user
+  user:
+    state: present
+    shell: /bin/bash
+    groups: sudo
+    name: "{{ item.name }}"
+    home: "/home/{{ item.name }}"
+    createhome: yes
+  with_flattened: users
+
+- name: create ssh directory
+  file:
+    state: directory
+    path: "/home/{{ item.name }}/.ssh"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: "0700"
+  with_flattened: users
+
+- name: screenrc for user
+  copy:
+    src: screenrc
+    dest: "/home/{{ item.name }}/.screenrc"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+  with_flattened: users

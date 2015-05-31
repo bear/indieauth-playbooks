@@ -1,0 +1,63 @@
+---
+- hosts: indieauth
+  remote_user: ops
+  sudo: yes
+
+  vars:
+    project: "indieauth"
+    deploy_repo: "https://github.com/aaronpk/IndieAuth.com.git"
+    deploy_branch: "master"
+
+  roles:
+    - ruby
+    - { role: iptable_rule, rule_type: out, rule_name: etcd, rule_port: 4001 }
+    - { role: user, users: indieauth_team }
+
+  tasks:
+    - name: add indieauth keys
+      authorized_key: 
+        user: "{{ item.name }}"
+        manage_dir: yes
+        key: "{{ item.pubkey }}"
+      with_flattened: indieauth_team
+
+    - name: ensure local bin directory
+      file: 
+        state: directory
+        path: "/home/{{ project }}/bin"
+        owner: "{{ project }}"
+        group: "{{ project }}"
+
+    - name: unpack ruby
+      unarchive:
+        src: "/tmp/{{ ruby_tarball }}"
+        dest: "/home/{{ project }}"
+        copy: no
+        creates: "/home/{{ project }}/ruby-{{ ruby_version }}"
+        owner: "{{ project }}"
+        group: "{{ project }}"
+
+    - name: configure ruby
+      command: "./configure --prefix=/home/{{ project }}"
+      args:
+        chdir: "/home/{{ project }}/ruby-{{ ruby_version }}"
+        creates: "/home/{{ project }}/ruby-{{ ruby_version }}/Makefile"
+
+    - name: build ruby
+      command: "make"
+      args:
+        chdir: "/home/{{ project }}/ruby-{{ ruby_version }}"
+        creates: "/home/{{ project }}/ruby-{{ ruby_version }}/ruby"
+
+    - name: install ruby
+      command: "make install"
+      args:
+        chdir: "/home/{{ project }}/ruby-{{ ruby_version }}"
+        creates: "/home/{{ project }}/bin/ruby"
+
+    - name: clone repo
+      git:
+        repo: "{{ deploy_repo }}"
+        dest: "/home/{{ project }}/indieauth.com"
+        version: "{{ deploy_branch }}"
+        accept_hostkey: yes

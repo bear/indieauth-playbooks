@@ -1,0 +1,9 @@
+---
+- name: add to sudoers
+  lineinfile:
+    state: present
+    dest: /etc/sudoers
+    insertafter: EOF
+    line: '%{{ item.name }}    {{ user_sudoers }}'
+  with_flattened: users
+  when: user_sudoers|length > 0

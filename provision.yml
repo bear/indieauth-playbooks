@@ -1,0 +1,20 @@
+---
+- name: Ubuntu provision
+  hosts: all
+  remote_user: root
+  sudo: yes
+
+  roles:
+    - { role: user, users: ops_user }
+    - { role: user_keys, users: ops_user }
+    - { role: sudoers, users: ops_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: ALL" }
+    - baseline
+    - iptables
+
+  tasks:
+    - name: add indieauth keys
+      authorized_key: 
+        user: "{{ item.name }}"
+        manage_dir: yes
+        key: "{{ item.pubkey }}"
+      with_flattened: indieauth_team

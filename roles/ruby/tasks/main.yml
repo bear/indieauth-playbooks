@@ -1,0 +1,15 @@
+---
+- name: build dependencies
+  apt: 
+    state: installed
+    update-cache: yes
+    pkg: "{{ item }}"
+  with_items:
+    - libssl-dev
+    - libpcre3-dev
+    - zlib1g-dev
+    - libreadline6-dev
+    - libyaml-dev
+
+- name: get ruby source tarball
+  shell: chdir=/tmp/ creates={{ ruby_tarball }} wget {{ ruby_url}}{{ ruby_tarball }}

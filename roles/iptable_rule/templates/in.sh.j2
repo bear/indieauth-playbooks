@@ -1,0 +1,5 @@
+# called from main iptables.sh script
+
+# Allow incoming {{ rule_name }}
+iptables -A INPUT  -i {{ rule_net }} -p {{ rule_protocol }} --dport {{ rule_port }} -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o {{ rule_net }} -p {{ rule_protocol }} --sport {{ rule_port }} -m state --state ESTABLISHED -j ACCEPT
