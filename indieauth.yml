@@ -5,8 +5,9 @@
   sudo: yes
 
   vars:
+    deploy_dir: "indieauth.com"
     deploy_repo: "https://github.com/aaronpk/IndieAuth.com.git"
-    deploy_branch: "distributed"
+    deploy_branch: "master"
 
   tasks:
     - name: ensure local bin directory
@@ -41,33 +42,34 @@
         chdir: "/home/indieauth/ruby-{{ ruby.version }}"
         creates: "/home/indieauth/bin/ruby"
 
-    - name: clone repo
-      git:
-        repo: "{{ deploy_repo }}"
-        dest: "/home/indieauth/indieauth.com"
-        version: "{{ deploy_branch }}"
-        accept_hostkey: yes
-
     - name: install bundler
       gem:
         name: bundler
         state: present
         executable: "/home/indieauth/bin/gem"
 
+    - name: enable runit for indieauth
+      file:
+        src: "/etc/sv/indieauth"
+        dest: "/etc/service/indieauth"
+        state: link
+
+    - name: deploy script
+      template:
+        src: templates/deploy.sh.j2
+        dest: "/home/indieauth/deploy.sh"
+        owner: "indieauth"
+        group: "indieauth"
+        mode: "0755"
+
+    - name: deploy indieauth
+      shell: "/home/indieauth/deploy.sh"
+      args:
+        executable: "/bin/bash"
+        chdir: "/home/indieauth"
+
     - name: install gems
       shell: "/home/indieauth/.gem/ruby/2.2.0/bin/bundle install"
       args:
         executable: "/bin/bash"
         chdir: "/home/indieauth/indieauth.com"
-        # creates: "/home/{{ project }}/bin/bundler"
-
-    - name: restart nginx
-      service:
-        state: restarted
-        name: nginx
-
-    - name: start process
-      file:
-        src: "/etc/sv/indieauth"
-        dest: "/etc/service/indieauth"
-        state: link

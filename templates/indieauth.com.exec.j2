@@ -1,5 +1,8 @@
 #!/bin/sh
+envdir=$PWD/env
+PATH=/home/indieauth/bin:/home/indieauth/.gem/ruby/2.2.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 DIR=/home/indieauth/indieauth.com
+
 cd $DIR
 
-chpst -u indieauth:indieauth /home/indieauth/.gem/ruby/2.2.0/bin/bundle exec thin -p 9007 --threaded start
+exec 2>&1 chpst -e $envdir -u indieauth:indieauth bundle exec thin -p 9007 --threaded start 2>&1

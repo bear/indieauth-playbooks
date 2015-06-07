@@ -1,4 +1,4 @@
-indieauth-nyc       Public_ip="104.236.101.11"      Private_ip=""       Infra_ip=""
+indieauth-nyc       Public_ip="104.236.101.11"      indieauth_domain="nyc"
 
 
 [all:children]

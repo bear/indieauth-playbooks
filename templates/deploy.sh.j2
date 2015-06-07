@@ -1,0 +1,30 @@
+#!/bin/bash
+
+REPO="{{ deploy_repo }}"
+BRANCH="master"
+WORKDIR="{{ deploy_dir }}"
+WORKPATH="/home/indieauth/${WORKDIR}"
+CONFIG="config.yml"
+
+cd ~
+
+echo "--- deploying"                    > ~/deploy.log
+
+if [ -d "${WORKPATH}" ]; then
+  echo "--- clearing ${WORKPATH}"       | tee -a ~/deploy.log
+  rm -rf ${WORKPATH}
+fi
+
+echo "--- git clone into ${WORKDIR}"    | tee -a ~/deploy.log
+git clone $REPO ${WORKDIR}         2>&1 | tee -a ~/deploy.log
+cd ${WORKPATH}
+
+echo "--- active commit"                | tee -a ~/deploy.log
+git log -n 1                       2>&1 | tee -a ~/deploy.log
+echo "--- git status"                   | tee -a ~/deploy.log
+git status                         2>&1 | tee -a ~/deploy.log
+
+cp ~/${CONFIG} ${WORKPATH}/${CONFIG}
+
+echo "--- restarting"                   | tee -a ~/deploy.log
+sudo sv restart indieauth          2>&1 | tee -a ~/deploy.log

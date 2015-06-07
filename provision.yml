@@ -9,6 +9,7 @@
     - { role: user, users: indieauth_user }
     - { role: user_keys, users: ops_user }
     - { role: sudoers, users: ops_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: ALL" }
+    - { role: sudoers, users: indieauth_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: /usr/bin/sv" }
     - baseline
     - iptables
     - ruby
@@ -54,11 +55,23 @@
         owner: root
         group: root
 
+    - name: create runit directories
+      file:
+        state: directory
+        path: "/etc/sv/indieauth/env"
+        owner: root
+        group: root
+
     - name: populate runit log entry
       template:
         src: templates/indieauth.com.log.j2
         dest: "/etc/sv/indieauth/log/run"
         mode: "0755"
+
+    - name: populate runit env entry
+      template:
+        src: templates/indieauth.com.rack_env.j2
+        dest: "/etc/sv/indieauth/env/RACK_ENV"
 
     - name: populate runit entry
       template:

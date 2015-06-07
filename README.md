@@ -5,15 +5,26 @@
 - Ansible (installed via pip)
 - A ~/secrets/ folder where ssh keys and other things are stored that are not found in GitHub
 
-To setup an environment to run:
+To setup a python virtual environment to run:
 
-    virtualenv indieauth-playbooks
+    virtualenv --python=python2.7 indieauth-playbooks
+
+To "activate" the virtual environment for your current shell session:
+
     cd indieauth-playbooks
     . bin/activate
+
+To install ansible within the virtual environment:
+
     pip install --upgrade pip
     pip install ansible
+
+The ansible playbooks for indieauth then need to be retrieved:
+
     git clone http://github.com/bear/indieauth-playbooks
-    cd indieauth-playbooks
+
+NOTE: The ```pip install --upgrade pip``` step needs to be only run immediately after creating a virtual environment to ensure you are running the lates version of pip.
+
 
 ## Assumptions
 
@@ -25,7 +36,7 @@ To setup an environment to run:
 
 Ansible uses the ```hosts``` file to control information about the hosts it will be managing and the ```group_vars/all``` file to contain global variables. The ```roles``` folder is where common tasks are grouped into named roles along with any role specific variables or templates.
 
-The ```secrets``` variable contains the path that will be used to lookup ssh keys and other items that will never appear in the playbook directories so that they are not ever accidently added to github.
+The ```secrets``` variable found within ```group_vars/all``` contains the path that will be used to lookup ssh keys and other items that will never appear in the playbook directory path. This keeps them from ever being accidently added to github.
 
 ## Playbooks
 
