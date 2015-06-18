@@ -5,4 +5,4 @@ DIR=/home/indieauth/indieauth.com
 
 cd $DIR
 
-exec 2>&1 chpst -e $envdir -u indieauth:indieauth bundle exec thin -p 9007 --threaded start 2>&1
+exec 2>&1 chpst -e $envdir -u indieauth:indieauth bundle exec thin -p {{ listen_port }} --threaded start 2>&1

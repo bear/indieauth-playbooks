@@ -8,6 +8,10 @@
     deploy_dir: "indieauth.com"
     deploy_repo: "https://github.com/aaronpk/IndieAuth.com.git"
     deploy_branch: "master"
+    our_domain: "andyet"
+    listen_port: 9007
+  vars_files:
+    - secrets.yml
 
   tasks:
     - name: ensure local bin directory

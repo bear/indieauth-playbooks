@@ -1,4 +1,3 @@
-runsvcdir_conf
 # for runit - manage /usr/sbin/runsvdir-start
 
 start on runlevel [2345]

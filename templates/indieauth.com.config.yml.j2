@@ -1,0 +1,39 @@
+development:
+  root: https://127.0.0.1:9292
+  this_server: {{ our_domain }}.{{ base_domain }}
+  stats:
+    server: https://{{ stats.server }}
+    token: "{{ stats.token }}"
+  session_secret: "{{ session_key }}"
+  jwt_key: "{{ jwt_key }}"
+  ga_id: {{ ga_id }}
+  credit: <a href="http://indiewebcamp.com/sponsors">sponsors</a> of IndieWebCamp events
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  twilio:
+    sid: {{ twilio.sid }}
+    token: {{ twilio.token }}
+    number: {{ twilio.number }}
+  providers:
+    flickr:
+      client_id: {{ flikr.client_id }}
+      client_secret: {{ flikr.client_secret }}
+    github:
+      client_id: {{ github.client_id }}
+      client_secret: {{ github.client_secret }}
+    google_oauth2:
+      client_id: {{ google_oauth2.client_id }}
+      client_secret: {{ google_oauth2.client_secret }}
+    twitter:
+      client_id: {{ twitter.client_id }}
+      client_secret: {{ twitter.client_secret }}
+    lastfm:
+      client_id: {{ lastfm.client_id }}
+      client_secret: {{ lastfm.client_secret }}
+    beeminder:
+      client_id: {{ beeminder.client_id }}
+      client_secret: {{ beeminder.client_secret }}
+    eventbrite:
+      client_id: {{ eventbrite.client_id }}
+      client_secret: {{ eventbrite.client_secret }}
