@@ -43,6 +43,8 @@ The ```roles``` folder is where common tasks are grouped into named roles along 
 
 The ```secrets``` variable found within ```group_vars/all``` contains the path that will be used to lookup ssh keys and other items that will never appear in the playbook directory path. This keeps them from ever being accidently added to github.
 
+The ```secrets.yml``` file contains the keys and tokens that will be used to fill in config.yml - this file is kept out of github via ```.gitignore```.
+
 ## Playbooks
 
 ### provision.yml
