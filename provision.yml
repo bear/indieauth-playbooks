@@ -11,8 +11,10 @@
     - { role: sudoers, users: ops_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: ALL" }
     - { role: sudoers, users: indieauth_user, user_sudoers: "ALL=(ALL:ALL) NOPASSWD: /usr/bin/sv" }
     - baseline
+    - etcd
     - iptables
     - ruby
+    - { role: iptable_rule, rule_type: "in", rule_name: "etcd", rule_port: "{{ etcd_peer_port }}" }
 
   tasks:
     - name: add indieauth keys

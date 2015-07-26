@@ -46,6 +46,10 @@ iptables -A INPUT  -p udp --sport 53 -j ACCEPT
 iptables -A INPUT -s 0/0 -d 0/0 -p udp --source-port 123:123 -m state --state ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -s 0/0 -d 0/0 -p udp --destination-port 123:123 -m state --state NEW,ESTABLISHED -j ACCEPT
 
+# Allow outgoing range
+iptables -A OUTPUT -o eth0 -p tcp --dport 1024:32000 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -i eth0 -p tcp --sport 1024:32000 -m state --state ESTABLISHED -j ACCEPT
+
 for s in /opt/sbin/iptables_conf.d/iptables_*.sh ; do
   if [ -e "${s}" ]; then
     source ${s}
