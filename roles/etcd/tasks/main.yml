@@ -1,0 +1,14 @@
+---
+- name: download etcd
+  shell:  "wget {{ etcd_url}}{{ etcd_download }}"
+  args:
+    chdir: "/tmp/"
+    creates: "{{ etcd_download }}"
+
+- name: unpack etcd
+  command: "tar xf {{ etcd_download }}"
+  args:
+    chdir: "/tmp/"
+    creates: "{{ etcd_filename }}"
+
+- include: server.yml

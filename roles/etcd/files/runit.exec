@@ -1,0 +1,3 @@
+#!/bin/sh
+ulimit -n 65536
+exec 2>&1 /opt/sbin/etcd --name "{{ our_name }}" --listen-peer-urls "http://{{ Public_ip }}:{{ etcd_peer_port }},http://localhost:7001" --data-dir "/var/lib/etcd/"

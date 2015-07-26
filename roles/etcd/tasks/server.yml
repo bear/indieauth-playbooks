@@ -1,0 +1,24 @@
+---
+- name: copy etcd binary
+  command: chdir=/tmp/ creates=/opt/sbin/etcd cp {{ etcd_filename }}/etcd /opt/sbin/
+
+- name: ensure etcd user
+  user: name=etcd system=yes state=present createhome=no
+
+- name: create etcd data directory
+  file: path=/var/lib/etcd owner=etcd group=etcd state=directory
+
+- name: create etcd log directory
+  file: path=/var/log/etcd owner=etcd group=etcd state=directory
+
+- name: create runit directories
+  file: path=/etc/sv/etcd/log owner=root group=root state=directory
+
+- name: populate runit entry for etcd
+  copy: src=runit.log dest=/etc/sv/etcd/log/run mode=755
+
+- name: populate runit log entry for etcd
+  copy: src=runit.exec dest=/etc/sv/etcd/run mode=755
+
+- name: enabled etcd
+  file: state=link src=/etc/sv/etcd dest=/etc/service/etcd force=yes

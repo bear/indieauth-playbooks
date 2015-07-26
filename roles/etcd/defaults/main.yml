@@ -1,0 +1,8 @@
+etcd_version: "2.0.13"
+etcd_filename: "etcd-v{{ etcd_version }}-linux-amd64"
+etcd_download: "{{ etcd_filename }}.tar.gz"
+etcd_url: "https://github.com/coreos/etcd/releases/download/v{{ etcd_version }}/"
+etcd_client_port: 4001
+etcd_peer_port: 2380
+etcd_server_install: false
+etcd_cli_install: true
